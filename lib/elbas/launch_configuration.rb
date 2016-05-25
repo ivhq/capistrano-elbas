@@ -53,11 +53,11 @@ module Elbas
       def create_options
         options = {
           associate_public_ip_address: base_launch_config.associate_public_ip_address,
-          block_device_mappings: base_launch_config.block_device_mappings,
           detailed_instance_monitoring: base_launch_config.detailed_instance_monitoring,
           security_groups: base_security_group_ids
         }
 
+        options.merge(block_device_mappings: base_launch_config.block_device_mappings) if base_launch_config.block_device_mappings.present?
         options.merge(iam_instance_profile: base_launch_config.iam_instance_profile) if base_launch_config.iam_instance_profile.present?
         options.merge(key_name: base_launch_config.key_name) if base_launch_config.key_name.present?
         options.merge(spot_price: base_launch_config.spot_price) if base_launch_config.spot_price.present?
