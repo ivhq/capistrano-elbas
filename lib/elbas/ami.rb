@@ -6,8 +6,8 @@ module Elbas
       ami = new
       ami.cleanup do
         ami.save
-        ami.tag 'Deployed-with' => 'ELBAS'
-        ami.tag 'ELBAS-Deploy-group' => ami.autoscale_group_name
+        ami.tag 'Deployed-with' => 'elbas'
+        ami.tag 'elbas-deploy-group' => ami.autoscale_group_name
         yield ami
       end
     end
@@ -29,7 +29,7 @@ module Elbas
 
     private
       def name
-        timestamp "#{environment}-AMI"
+        timestamp "#{environment}-ami"
       end
 
       def trash

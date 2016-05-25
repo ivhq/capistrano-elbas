@@ -1,5 +1,7 @@
 module Elbas
   class AWSResource
+    require 'active_support/all'
+
     include Capistrano::DSL
     include Elbas::AWS::AutoScaling
     include Elbas::AWS::EC2
@@ -21,7 +23,7 @@ module Elbas
       end
 
       def environment
-        fetch(:rails_env, 'production')
+        fetch(:aws_environment_base_name, 'production')
       end
 
       def timestamp(str)
@@ -29,8 +31,8 @@ module Elbas
       end
 
       def deployed_with_elbas?(resource)
-        resource.tags['Deployed-with'] == 'ELBAS' &&
-          resource.tags['ELBAS-Deploy-group'] == autoscale_group_name
+        resource.tags['Deployed-with'] == 'elbas' &&
+          resource.tags['elbas-deploy-group'] == autoscale_group_name
       end
   end
 end

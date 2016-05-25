@@ -1,7 +1,7 @@
 module Elbas
   module Logger
     def info(message)
-      p "ELBAS: #{message}"
+      $stdout.puts "** elbas: #{message}"
     end
   end
 end

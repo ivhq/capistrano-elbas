@@ -29,10 +29,7 @@ set :aws_secret_access_key, ENV['AWS_SECRET_ACCESS_KEY']
 set :aws_region,            ENV['AWS_REGION']
 
 set :aws_no_reboot_on_create_ami, true
-set :aws_autoscale_instance_size, 'm1.small'
-
-set :aws_launch_configuration_detailed_instance_monitoring, true
-set :aws_launch_configuration_associate_public_ip, true
+set :aws_environment_base_name, 'production'
 ```
 
 ## Usage
@@ -49,12 +46,12 @@ That's it! Run `cap production deploy`. ELBAS will print the following log state
 deployment:
 
 ```
-"ELBAS: Adding server: ec2-XX-XX-XX-XXX.compute-1.amazonaws.com"
-"ELBAS: Creating EC2 AMI from i-123abcd"
-"ELBAS: Created AMI: ami-123456"
-"ELBAS: Creating an EC2 Launch Configuration for AMI: ami-123456"
-"ELBAS: Created Launch Configuration: elbas-lc-ENVIRONMENT-UNIX_TIMESTAMP"
-"ELBAS: Attaching Launch Configuration to AutoScale Group"
-"ELBAS: Deleting old launch configuration: elbas-lc-production-123456"
-"ELBAS: Deleting old image: ami-999999"
+** elbas: Adding server: ec2-XX-XX-XX-XXX.compute-1.amazonaws.com
+** elbas: Creating EC2 AMI from i-123abcd
+** elbas: Created AMI: ami-123456
+** elbas: Creating an EC2 Launch Configuration for AMI: ami-123456
+** elbas: Created Launch Configuration: elbas-lc-ENVIRONMENT-UNIX_TIMESTAMP
+** elbas: Attaching Launch Configuration to AutoScale Group
+** elbas: Deleting old launch configuration: elbas-lc-production-123456
+** elbas: Deleting old image: ami-999999
 ```
