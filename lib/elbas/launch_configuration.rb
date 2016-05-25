@@ -51,8 +51,6 @@ module Elbas
       end
 
       def create_options
-        info "Using security group IDs: '#{base_security_group_ids.join(',')}'"
-
         options = {
           associate_public_ip_address: base_launch_config.associate_public_ip_address,
           block_device_mappings: base_launch_config.block_device_mappings,
@@ -64,6 +62,8 @@ module Elbas
         options.merge(key_name: base_launch_config.key_name) if base_launch_config.key_name.present?
         options.merge(spot_price: base_launch_config.spot_price) if base_launch_config.spot_price.present?
         options.merge(user_data: base_launch_config.user_data) if base_launch_config.user_data.present?
+
+        info "Creating launch configuration with options: #{options}"
 
         options
       end
