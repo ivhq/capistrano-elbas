@@ -14,13 +14,13 @@ def autoscale(groupname, *args)
 
   running_instances.each do |instance|
     hostname = instance.dns_name || instance.private_ip_address
-    stdout.puts "** elbas: Adding server: #{hostname}"
+    $stdout.puts "** elbas: Adding server: #{hostname}"
     server(hostname, *args)
   end
 
   if running_instances.count > 0
     after('deploy', 'elbas:scale')
   else
-    puts "** elbas: AMI could not be created because no running instances were found. Is your autoscale group name correct?"
+    $stdout.puts "** elbas: AMI could not be created because no running instances were found. Is your autoscale group name correct?"
   end
 end
