@@ -34,6 +34,10 @@ module Elbas
         autoscale_group.launch_configuration
       end
 
+      def base_security_group_ids
+        base_launch_config.security_groups.map { |sg| sg.security_group_id }
+      end
+
       def launch_config_base_name
         "elbas-#{environment}-#{autoscale_group_name}"
       end
@@ -47,11 +51,13 @@ module Elbas
       end
 
       def create_options
+        info "Using security group IDs: '#{base_security_group_ids.join(',')}'"
+
         options = {
           associate_public_ip_address: base_launch_config.associate_public_ip_address,
           block_device_mappings: base_launch_config.block_device_mappings,
           detailed_instance_monitoring: base_launch_config.detailed_instance_monitoring,
-          security_groups: base_launch_config.security_groups.map { |sg| sg.security_group_id }
+          security_groups: base_security_group_ids
         }
 
         options.merge(iam_instance_profile: base_launch_config.iam_instance_profile) if base_launch_config.iam_instance_profile.present?
