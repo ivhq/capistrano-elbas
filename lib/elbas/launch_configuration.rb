@@ -51,7 +51,7 @@ module Elbas
           associate_public_ip_address: base_launch_config.associate_public_ip_address,
           block_device_mappings: base_launch_config.block_device_mappings,
           detailed_instance_monitoring: base_launch_config.detailed_instance_monitoring,
-          security_groups: base_launch_config.security_groups
+          security_groups: base_launch_config.security_groups.map { |sg| sg.security_group_id }
         }
 
         options.merge(iam_instance_profile: base_launch_config.iam_instance_profile) if base_launch_config.iam_instance_profile.present?
