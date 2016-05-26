@@ -13,7 +13,7 @@ namespace :elbas do
     Elbas::AMI.create do |ami|
       $stdout.puts "** elbas: Created AMI: #{ami.aws_counterpart.id}"
       Elbas::LaunchConfiguration.create(ami) do |lc|
-        $stdout.puts "** elbas: Created Launch Configuration: #{lc.aws_counterpart.name}"
+        $stdout.puts "** elbas: Created Launch Configuration: #{lc.aws_counterpart}"
         lc.attach_to_autoscale_group!
       end
     end
