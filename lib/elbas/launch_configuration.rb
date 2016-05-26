@@ -35,7 +35,8 @@ module Elbas
       end
 
       def base_security_group_ids
-        base_launch_config.security_groups.map { |sg| sg.security_group_id }
+        security_groups = base_launch_config.security_groups.map { |sg| sg.security_group_id }
+        security_groups.length == 1 ? security_groups.first : security_groups
       end
 
       def launch_config_base_name
