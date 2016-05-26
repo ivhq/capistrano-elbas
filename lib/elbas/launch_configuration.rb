@@ -77,11 +77,11 @@ module Elbas
     end
 
     def deployed_with_elbas?(lc)
-      lc.name.include? launch_config_base_name
+      lc[:launch_configuration_name].include? launch_config_base_name
     end
 
     def trash
-      autoscaling.launch_configurations.to_a.select do |lc|
+      autoscaling.client.describe_launch_configurations[:launch_configurations].select do |lc|
         deployed_with_elbas? lc
       end
     end
