@@ -38,8 +38,9 @@ module Elbas
     private
 
       def base_launch_config
-        base_launch_config_name = autoscale_group.launch_configuration.launch_configuration_name
-        launch_configs = autoscaling.client.describe_launch_configurations(launch_configuration_names: [base_launch_config_name])
+        launch_configs = autoscaling.client.describe_launch_configurations(
+          launch_configuration_names: [autoscale_group.launch_configuration_name]
+        )
         puts launch_configs[:launch_configurations].first
         abort
       end
