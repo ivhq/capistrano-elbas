@@ -18,20 +18,23 @@ module Elbas
     def save
       info "Creating an EC2 Launch Configuration for AMI: #{image_id}"
       with_retry do
-        # @aws_counterpart = autoscaling.launch_configurations.create(name, image_id, instance_type, create_options)
-        @aws_counterpart = autoscaling.client.create_launch_configuration(create_options)
+        autoscaling.client.create_launch_configuration(create_options)
       end
+    end
+
+    def name
+      @name ||= timestamp(launch_config_base_name)
     end
 
     def attach_to_autoscale_group!
       info 'Attaching Launch Configuration to AutoScale Group'
-      autoscale_group.update(launch_configuration: aws_counterpart)
+      autoscale_group.update(launch_configuration: name)
     end
 
     def destroy(launch_configurations = [])
       launch_configurations.each do |lc|
-        info "Deleting old launch configuration: #{lc.name}"
-        lc.delete
+        info "Deleting old launch configuration: #{lc}"
+        autoscaling.client.delete_launch_configuration(launch_configuration_name: lc)
       end
     end
 
@@ -46,10 +49,6 @@ module Elbas
 
     def launch_config_base_name
       "elbas-#{environment}-#{autoscale_group_name}"
-    end
-
-    def name
-      @name ||= timestamp(launch_config_base_name)
     end
 
     def instance_type
@@ -76,14 +75,13 @@ module Elbas
       options
     end
 
-    def deployed_with_elbas?(lc)
-      lc[:launch_configuration_name].include? launch_config_base_name
+    def deployed_with_elbas?(c)
+      c.include?(launch_config_base_name)
     end
 
     def trash
-      autoscaling.client.describe_launch_configurations[:launch_configurations].select do |lc|
-        deployed_with_elbas? lc
-      end
+      configs = autoscaling.client.describe_launch_configurations[:launch_configurations].map { |l| l[:launch_configuration_name] }
+      configs.select { |c| deployed_with_elbas?(c) }
     end
 
   end
