@@ -1,18 +1,24 @@
 module Elbas
   class LaunchConfiguration < AWSResource
 
+    attr_reader :image_id
+
     def self.create(ami, &block)
-      lc = new
+      lc = new(ami.aws_counterpart.id)
       lc.cleanup do
-        lc.save(ami)
+        lc.save
         yield lc
       end
     end
 
-    def save(ami)
-      info "Creating an EC2 Launch Configuration for AMI: #{ami.aws_counterpart.id}"
+    def initialize(image_id)
+      @image_id = image_id
+    end
+
+    def save
+      info "Creating an EC2 Launch Configuration for AMI: #{image_id}"
       with_retry do
-        # @aws_counterpart = autoscaling.launch_configurations.create(name, ami.aws_counterpart.id, instance_type, create_options)
+        # @aws_counterpart = autoscaling.launch_configurations.create(name, image_id, instance_type, create_options)
         @aws_counterpart = autoscaling.client.create_launch_configuration(create_options)
       end
     end
@@ -55,7 +61,7 @@ module Elbas
       def create_options
         options = {
           launch_configuration_name: name,
-          image_id: ami.aws_counterpart.id,
+          image_id: image_id,
           instance_type: instance_type,
           associate_public_ip_address: base_launch_config.associate_public_ip_address,
           detailed_instance_monitoring: base_launch_config.detailed_instance_monitoring,
