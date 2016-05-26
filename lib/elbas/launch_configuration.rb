@@ -64,8 +64,11 @@ module Elbas
           image_id: image_id,
           instance_type: instance_type,
           associate_public_ip_address: base_launch_config.associate_public_ip_address,
-          detailed_instance_monitoring: base_launch_config.detailed_instance_monitoring,
-          security_groups: base_security_group_ids
+          ebs_optimized: base_launch_config.ebs_optimized,
+          security_groups: base_security_group_ids,
+          instance_monitoring: {
+            enabled: base_launch_config.detailed_instance_monitoring
+          }
         }
 
         options[:block_device_mappings] = base_launch_config.block_device_mappings if base_launch_config.block_device_mappings.present?
