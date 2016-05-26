@@ -73,10 +73,6 @@ module Elbas
       options[:spot_price] = base_launch_config[:spot_price] if base_launch_config[:spot_price].present?
       options[:user_data] = base_launch_config[:user_data] if base_launch_config[:user_data].present?
 
-      info "Launch configuration options: #{options}"
-
-      abort
-
       options
     end
 
