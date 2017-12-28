@@ -66,7 +66,6 @@ module Elbas
         instance_monitoring: base_launch_config[:instance_monitoring]
       }
 
-      options[:block_device_mappings] = base_launch_config[:block_device_mappings] if base_launch_config[:block_device_mappings].present?
       options[:iam_instance_profile] = base_launch_config[:iam_instance_profile] if base_launch_config[:iam_instance_profile].present?
       options[:key_name] = base_launch_config[:key_name] if base_launch_config[:key_name].present?
       options[:spot_price] = base_launch_config[:spot_price] if base_launch_config[:spot_price].present?
