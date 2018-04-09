@@ -1,26 +1,38 @@
-require 'aws-sdk-v1'
+require 'aws-sdk'
 require 'capistrano/dsl'
 
 load File.expand_path("../tasks/elbas.rake", __FILE__)
 
-def autoscale(groupname, *args)
+def autoscale(autoscaling_group_name, *args)
   include Capistrano::DSL
   include Elbas::AWS::AutoScaling
+  include Elbas::AWS::EC2
 
-  autoscale_group   = autoscaling.groups[groupname]
-  running_instances = autoscale_group.ec2_instances.filter('instance-state-name', 'running')
+  instances    = autoscaling_group(autoscaling_group_name).instances
+  instance_ids = instances.map(&:instance_id)
 
-  set :aws_autoscale_group, groupname
+  deploy_instances = ec2.instances(
+    filters: [
+      {
+        name: 'instance-state-name',
+        values: ['running']
+      }
+    ],
+    instance_ids: instance_ids
+  )
 
-  running_instances.each do |instance|
-    hostname = instance.dns_name || instance.private_ip_address
-    $stdout.puts "** elbas: Adding server: #{hostname}"
+  deploy_instances.each do |instance|
+    hostname = instance.public_dns_name || instance.public_ip_address
+    $stdout.puts "** elbas (#{autoscaling_group_name}): Adding server: #{hostname}"
     server(hostname, *args)
   end
 
-  if running_instances.count > 0
-    after('deploy', 'elbas:scale')
+  if deploy_instances.count > 0
+    after :deploy, :finished do
+      invoke 'elbas:scale', autoscaling_group_name
+    end
+    $stdout.puts "** elbas (#{autoscaling_group_name}): Scheduled AMI creation after deployment"
   else
-    $stdout.puts "** elbas: AMI could not be created because no running instances were found. Is your autoscale group name correct?"
+    $stdout.puts "** elbas (#{autoscaling_group_name}): AMI could not be created because no running instances were found. Is your autoscale group name correct?"
   end
 end

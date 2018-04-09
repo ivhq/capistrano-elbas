@@ -6,15 +6,16 @@ module Elbas
       include Capistrano::DSL
 
       def autoscaling
-        @_autoscaling ||= ::AWS::AutoScaling.new(credentials)
+        @_autoscaling ||= ::Aws::AutoScaling::Resource.new(autoscaling_client)
       end
 
-      def autoscale_group
-        @_autoscale_group ||= autoscaling.groups[autoscale_group_name]
+      def autoscaling_client
+        @_autoscaling_client ||= ::Aws::AutoScaling::Client.new(credentials)
       end
 
-      def autoscale_group_name
-        fetch(:aws_autoscale_group)
+      def autoscaling_group(autoscaling_group_name)
+        @_autoscaling_groups ||= {}
+        @_autoscaling_groups[autoscaling_group_name] ||= autoscaling.group(autoscaling_group_name)
       end
     end
   end

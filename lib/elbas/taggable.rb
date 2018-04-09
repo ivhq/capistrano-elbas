@@ -1,8 +1,9 @@
 module Elbas
   module Taggable
-    def tag(tags = {})
+    def tag(tags_hash = {})
       with_retry do
-        tags.each { |k, v| aws_counterpart.tags[k] = v }
+        tag_array = tags_hash.map { |k,v| { key: k, value: v } }
+        aws_counterpart.create_tags(tags: tag_array)
       end
     end
   end
