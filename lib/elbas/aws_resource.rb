@@ -8,31 +8,37 @@ module Elbas
     include Elbas::Retryable
     include Logger
 
-    attr_reader :aws_counterpart
+    attr_reader :aws_counterpart, :autoscaling_group_name
+
+    def initialize(autoscaling_group_name)
+      @autoscaling_group_name = autoscaling_group_name
+    end
 
     def cleanup(&block)
       items = trash || []
-      yield
-      destroy items
+      block.call
+      destroy(items)
       self
     end
 
     private
-      def base_ec2_instance
-        @_base_ec2_instance ||= autoscale_group.ec2_instances.filter('instance-state-name', 'running').first
-      end
 
-      def environment
-        fetch(:aws_environment_base_name, 'production')
-      end
+    def base_ec2_instance_id
+      @_base_ec2_instance_id ||= autoscaling_group(autoscaling_group_name).instances.first.instance_id
+    end
 
-      def timestamp(str)
-        "#{str}-#{Time.now.to_i}"
-      end
+    def environment
+      fetch(:aws_environment_base_name, 'production')
+    end
 
-      def deployed_with_elbas?(resource)
-        resource.tags['Deployed-with'] == 'elbas' &&
-          resource.tags['elbas-deploy-group'] == autoscale_group_name
-      end
+    def timestamp(str)
+      "#{str}-#{Time.now.to_i}"
+    end
+
+    def deployed_with_elbas?(resource)
+      resource.tags.any? { |tag| tag.key.downcase == 'deployed-with' && tag.value.downcase == 'elbas' } &&
+      resource.tags.any? { |tag| tag.key.downcase == 'elbas-deploy-group' && tag.value.downcase == autoscaling_group_name.downcase }
+    end
+
   end
 end

@@ -7,7 +7,7 @@ module Elbas
       def credentials
         @_credentials ||= begin
           if fetch(:aws_profile_name)
-            provider = ::AWS::Core::CredentialProviders::SharedCredentialFileProvider.new(profile_name: fetch(:aws_profile_name))
+            provider = ::Aws::Core::CredentialProviders::SharedCredentialFileProvider.new(profile_name: fetch(:aws_profile_name))
             _credentials = { credential_provider: provider }
           else
             _credentials = {}
