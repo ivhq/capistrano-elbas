@@ -2,14 +2,6 @@ require 'elbas'
 
 namespace :elbas do
   task :scale, :group_name do |task, args|
-    if fetch(:aws_access_key_id, ENV['AWS_ACCESS_KEY_ID']).present?
-      set :aws_access_key_id, fetch(:aws_access_key_id, ENV['AWS_ACCESS_KEY_ID'])
-    end
-
-    if fetch(:aws_secret_access_key, ENV['AWS_SECRET_ACCESS_KEY']).present?
-      set :aws_secret_access_key, fetch(:aws_secret_access_key, ENV['AWS_SECRET_ACCESS_KEY'])
-    end
-
     autoscaling_group_name = args[:group_name]
 
     raise '** elbas: Autocaling Group Name not provided as argument for task elbas:scale!' if autoscaling_group_name.nil?

@@ -2,15 +2,14 @@ module Elbas
   module AWS
     module AutoScaling
       extend ActiveSupport::Concern
-      include Elbas::AWS::Credentials
       include Capistrano::DSL
 
       def autoscaling
-        @_autoscaling ||= ::Aws::AutoScaling::Resource.new(autoscaling_client)
+        @_autoscaling_resource ||= ::Aws::AutoScaling::Resource.new(client: autoscaling_client)
       end
 
       def autoscaling_client
-        @_autoscaling_client ||= ::Aws::AutoScaling::Client.new(credentials)
+        @_autoscaling_client ||= ::Aws::AutoScaling::Client.new(region: fetch(:aws_region))
       end
 
       def autoscaling_group(autoscaling_group_name)
