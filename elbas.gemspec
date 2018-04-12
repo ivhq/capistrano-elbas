@@ -25,5 +25,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'aws-sdk', '>= 2.0', '< 4.0'
   spec.add_dependency 'capistrano', '~> 3.0'
-  spec.add_dependency 'activesupport', '~> 5.1.0'
+  spec.add_dependency 'activesupport', '>= 5.0'
 end
