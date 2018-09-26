@@ -35,11 +35,20 @@ module Elbas
       )
 
       resp.images.each do |i|
-        snapshot_id = i.block_device_mappings.first.ebs.snapshot_id
-        info "De-registering old AMI: #{i.image_id}"
-        ec2_client.deregister_image(image_id: i.image_id)
-        info "Deleting old AMI snapshot: #{i.image_id} (AMI: #{i.image_id})"
-        ec2_client.delete_snapshot(snapshot_id: snapshot_id)
+        image_id = i.image_id
+
+        # JH: Sometimes block_device_mappings is an empty array
+        if i.block_device_mappings.any?
+          snapshot_id = i.block_device_mappings.first.ebs.snapshot_id
+        end
+
+        info "De-registering old AMI: #{image_id}"
+        ec2_client.deregister_image(image_id: image_id)
+
+        if snapshot_id.present?
+          info "Deleting old AMI snapshot: #{image_id}"
+          ec2_client.delete_snapshot(snapshot_id: snapshot_id)
+        end
       end
     end
 
